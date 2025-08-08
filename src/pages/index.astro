@@ -12,13 +12,13 @@ if (setupMerchantResponse && !setupMerchantResponse.error) {
 }
 ---
 <BaseLayout title="Merchant Setup" logo="/psp-logo.svg">
-	<section>
+	<section class="setup-merchant">
 		<h2>Merchant Setup</h2>
 		<form action={actions.setupMerchant} method="POST">
 
 			<div class="input-wrapper">
 				<label for="merchantName">Merchant Name</label>
-				<input type="text" name="merchantName" placeholder="e.g. Sally's Grocery" />
+				<input type="text" id="merchantName" name="merchantName" placeholder="e.g. Sally's Grocery" />
 			</div>
 			
 			{secretsConfigured ? 
@@ -30,17 +30,13 @@ if (setupMerchantResponse && !setupMerchantResponse.error) {
 		{setupMerchantResponse?.error && <p>Transaction failed. Please check your transaction logs for details.</p>}
 	</section>
 
-	<section>
+	<section class="wallet-sets">
 		<h2>All merchants</h2>
 		<WalletSets />
 	</section>
 </BaseLayout>
 
 <style>
-	:global(.site__logo) {
-		max-width: 15em;
-	}
-
 	h1,
 	h2 {
 		margin-block-end: var(--space-xs);
@@ -63,5 +59,12 @@ if (setupMerchantResponse && !setupMerchantResponse.error) {
 
 	button {
 		margin-inline: auto;
+	}
+
+	@media screen and (max-width: 679px) {
+		.wallet-sets {
+			display: flex;
+			flex-direction: column;
+		}
 	}
 </style>

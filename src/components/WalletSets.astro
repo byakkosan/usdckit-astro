@@ -1,5 +1,6 @@
 ---
 import { getSecret } from 'astro:env/server';
+import CopyBlock from './CopyBlock.astro';
 
 interface WalletSet {
   id: string;
@@ -38,9 +39,10 @@ const data = json.data;
     .filter((walletSet: WalletSet) => !walletSet.name.includes('-pa-'))
     .map((walletSet: WalletSet) => (
       <tr>
-        <td><a href={`/merchants/${walletSet.id}`}>{walletSet.name}</a></td>
-        <td>{walletSet.id}</td>
-        <td>{walletSet.custodyType}</td>
+        <td data-label="Name"><a href={`/merchants/${walletSet.id}`}>{walletSet.name}</a></td>
+        <td data-label="WalletSet ID" class="collapse"><CopyBlock source={walletSet.id} /></td>
+        
+        <td data-label="Custody Type">{walletSet.custodyType}</td>
       </tr>
     ))}
   </tbody>
@@ -51,6 +53,7 @@ const data = json.data;
   table {
     max-width: 100%;
     font-size: var(--step--1);
+    margin-inline: auto;
   }
 
   th {
@@ -69,45 +72,43 @@ const data = json.data;
     display: none;
   }
 
-  @media screen and (max-width: 680px) {
-  table {
-    border: 0;
-    display: block;
-    box-shadow: none;
-  }
+  @media screen and (max-width: 679px) {
+    table {
+      border: 0;
+      display: block;
+      box-shadow: none;
+    }
 
-  thead {
-    position: absolute;
-    opacity: 0;
-  }
-    
-  tbody {
-    display: block;
-    min-width: 19em;
-    max-width: 25em;
-  }
+    thead {
+      position: absolute;
+      opacity: 0;
+    }
+      
+    tbody {
+      display: block;
+    }
 
-  tr {
-    border-top: 2px solid #3c3c3b;
-    border-bottom: 2px solid #3c3c3b;
-    display: block;
-    margin-bottom: 1em;
-  }
+    tr {
+      border-top: 2px solid #3c3c3b;
+      border-bottom: 2px solid #3c3c3b;
+      display: block;
+      margin-bottom: 1em;
+    }
 
-  td {
-    border-bottom: 1px solid #3c3c3b;
-    display: flex;
-  }
+    td {
+      border-bottom: 1px solid #3c3c3b;
+      display: flex;
+      gap: var(--space-3xs);
+    }
 
-  td::before {
-    display: inline-block;
-    font-weight: bold;
-    margin-right: auto;
-    padding-right: 1em;
-  }
+    td::before {
+      content: attr(data-label) ": ";
+      font-weight: bold;
+      display: block;
+    }
 
-  td:last-child {
-    border-bottom: 0;
-  }
+    td:last-child {
+      border-bottom: 0;
+    }
   }
 </style>

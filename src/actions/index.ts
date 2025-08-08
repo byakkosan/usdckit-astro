@@ -31,22 +31,22 @@ export const server = {
       const merchantWalletSet = await client.createWalletSet({
         name: `${slugify(input.merchantName)}-wallet-set`,
       })
-
-      const merchantWalletSetId = merchantWalletSet.id
-      const merchantWallet = await client.createAccount({
-        walletSetId: merchantWalletSetId,
-        refId: `${slugify(input.merchantName)}-wallet`,
-        chain: ETH_SEPOLIA,
-      })
-
       const paymentAcceptanceWalletSet = await client.createWalletSet({
         name: `${slugify(input.merchantName)}-pa-wallet-set`,
       })
 
+      const merchantWallet = await client.createAccount({
+        walletSetId: merchantWalletSet.id,
+        refId: `${slugify(input.merchantName)}-wallet`,
+        chain: ETH_SEPOLIA,
+      })
+      await client.drip({ account: merchantWallet, token: null, chain: ETH_SEPOLIA })
+      await new Promise(resolve => setTimeout(resolve, 10000))
+
       db.data.merchants.push({
         name: input.merchantName,
         walletSetName: `${slugify(input.merchantName)}-wallet-set`,
-        walletSetId: merchantWalletSetId,
+        walletSetId: merchantWalletSet.id,
         walletId: merchantWallet.address,
         paymentAcceptanceWalletName: `${slugify(input.merchantName)}-pa-wallet-set`,
         paymentAcceptanceWalletSetId: paymentAcceptanceWalletSet.id
@@ -54,7 +54,7 @@ export const server = {
       await db.write();
 
       const info = {
-        walletSetId: merchantWalletSetId,
+        walletSetId: merchantWalletSet.id,
         paymentAcceptanceWalletSetId: paymentAcceptanceWalletSet.id
       };
       return info;
@@ -75,7 +75,6 @@ export const server = {
       } as const
 
       const paymentAcceptanceWallet = await client.createAccount({
-        // Record Order ID on the wallet for reference
         refId: `order-${input.orderId}`,
         walletSetId: input.paymentAcceptanceWalletSetId,
         chain: ETH_SEPOLIA,
