@@ -1,0 +1,54 @@
+---
+const {logo, altText, merchantId } = Astro.props;
+---
+<header>
+  <nav>
+      {merchantId ? (
+        <a href={`/merchants/${merchantId}`} class="merchant-logo">
+          <img src={logo} alt={altText} />
+          <span>{altText}</span>
+        </a>
+      ) : (
+        <a href="/" class="psp-logo">
+          <img src={logo} alt="Payment Processor" />
+        </a>
+      )}
+  </nav>
+</header>
+
+<style>
+  header {
+    color: white;
+    background-image: radial-gradient(#3d3652, #1f1a30);
+  }
+
+  nav {
+    padding-inline: var(--space-s);
+  }
+
+  .psp-logo img {
+    max-width: 13em;
+    padding-block: var(--space-2xs);
+  }
+
+  .merchant-logo {
+    display: flex;
+    align-items: center;
+    justify-content: start;
+    gap: var(--space-s);
+    text-decoration: none;
+  }
+
+  .merchant-logo img {
+    max-width: 2.5em;
+    padding-block: var(--space-xs);
+  }
+
+  .merchant-logo span {
+    font-size: var(--step-3);
+    font-weight: 700;
+    background: var(--theme-gradient);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+</style>

@@ -1,0 +1,113 @@
+---
+import { getSecret } from 'astro:env/server';
+
+interface WalletSet {
+  id: string;
+  name: string;
+  custodyType: string;
+  createDate: string;
+  updateDate: string;
+}
+
+const secretsConfigured = Boolean( getSecret('API_KEY')) && Boolean(getSecret('ENTITY_SECRET'));
+
+const url = `https://api.circle.com/v1/w3s/walletSets`;
+const options = {
+  method: 'GET',
+  headers: {
+    Authorization: `Bearer ${getSecret('API_KEY')}`,
+    'Content-Type': 'application/json'
+  }
+};
+const response = await fetch(url, options);
+const json = await response.json();
+const data = json.data;
+---
+
+<table>
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>WalletSet ID</th>
+      <th>Custody Type</th>
+    </tr>
+  </thead>
+  {secretsConfigured &&
+  <tbody>
+    {data.walletSets
+    .filter((walletSet: WalletSet) => !walletSet.name.includes('-pa-'))
+    .map((walletSet: WalletSet) => (
+      <tr>
+        <td><a href={`/merchants/${walletSet.id}`}>{walletSet.name}</a></td>
+        <td>{walletSet.id}</td>
+        <td>{walletSet.custodyType}</td>
+      </tr>
+    ))}
+  </tbody>
+  }
+</table>
+
+<style>
+  table {
+    max-width: 100%;
+    font-size: var(--step--1);
+  }
+
+  th {
+    background-color: #555;
+    color: #fff;
+  }
+
+  th,
+  td {
+    text-align: left;
+    padding: 0.5em 1em;
+    white-space: nowrap;
+  }
+
+  td::before {
+    display: none;
+  }
+
+  @media screen and (max-width: 680px) {
+  table {
+    border: 0;
+    display: block;
+    box-shadow: none;
+  }
+
+  thead {
+    position: absolute;
+    opacity: 0;
+  }
+    
+  tbody {
+    display: block;
+    min-width: 19em;
+    max-width: 25em;
+  }
+
+  tr {
+    border-top: 2px solid #3c3c3b;
+    border-bottom: 2px solid #3c3c3b;
+    display: block;
+    margin-bottom: 1em;
+  }
+
+  td {
+    border-bottom: 1px solid #3c3c3b;
+    display: flex;
+  }
+
+  td::before {
+    display: inline-block;
+    font-weight: bold;
+    margin-right: auto;
+    padding-right: 1em;
+  }
+
+  td:last-child {
+    border-bottom: 0;
+  }
+  }
+</style>

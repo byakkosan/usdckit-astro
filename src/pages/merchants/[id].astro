@@ -1,0 +1,116 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import MerchantWallet from '../../components/MerchantWallet.astro';
+import WalletList from '../../components/WalletList.astro';
+import { JSONFilePreset } from 'lowdb/node';
+
+type Data = {
+  merchants: { name: string; walletSetName: string; walletSetId: string; walletId: string; paymentAcceptanceWalletName: string; paymentAcceptanceWalletSetId: string }[]
+}
+import { actions } from 'astro:actions';
+import crypto from 'crypto';
+
+const { id } = Astro.params;
+
+const defaultData: Data = { merchants: [] };
+const db = await JSONFilePreset<Data>('./src/db/db.json', defaultData);
+const merchant = db.data.merchants.find(
+  (p: { walletSetId: string }) => p.walletSetId === id
+);
+
+if (!merchant) {
+  throw new Error(`merchant with id ${id} not found`);
+}
+
+const { name, paymentAcceptanceWalletSetId } = merchant;
+const orderId = crypto.randomUUID();
+const price = 1;
+
+const makePaymentReponse = Astro.getActionResult(actions.makePayment);
+console.log(makePaymentReponse);
+if (makePaymentReponse && !makePaymentReponse.error) {
+  Astro.session?.set('paymentAcceptanceWallet', makePaymentReponse.data.paymentAcceptanceWallet);
+  Astro.session?.set('orderId', makePaymentReponse.data.orderId);
+	Astro.session?.set('amount', makePaymentReponse.data.amount);
+  Astro.session?.set('paymentLink', makePaymentReponse.data.paymentLink);
+  Astro.session?.set('encodedPaymentLink', makePaymentReponse.data.encodedPaymentLink);
+  Astro.session?.set('merchantName', name);
+  Astro.session?.set('merchantId', id);
+  return Astro.redirect('/pay');
+}
+---
+<BaseLayout title={name} altText={name} logo="/merchant-logo.svg" merchantId={id}>
+  <section class="order-summary">
+		<h2>Order summary</h2>
+		<div class="product">
+      <div class="product__image">
+        <img src="/product.png" alt="Good Vibes" />
+      </div>	
+			<div class="product__details">
+				<h3>Good Vibes</h3>
+				<p>Order ID: {orderId}</p>
+				<p>Qty: 1</p>
+				<p>Price per unit: {price} USDC</p>
+				<p>Total: {price} USDC</p>
+			</div>
+		</div>
+		<form action={actions.makePayment} method="POST">
+			<input type="hidden" name="orderId" value={orderId} />
+      <input type="hidden" name="paymentAcceptanceWalletSetId" value={paymentAcceptanceWalletSetId} />
+			<input type="hidden" name="amount" value={price} />
+      <input type="hidden" name="merchantName" value={name} />
+      <input type="hidden" name="merchantId" value={id} />
+			<button >Pay</button>
+		</form>
+		{makePaymentReponse?.error && <p>Transaction failed. Please check your transaction logs for details.</p>}
+	</section>
+	<section class="store-metadata">
+		<h2>Store metadata</h2>
+    <MerchantWallet walletSetId={id} />
+    <h3>Payment Acceptance Wallets</h3>
+    <WalletList walletSetId={paymentAcceptanceWalletSetId} />
+	</section>
+</BaseLayout>
+
+<style>
+  h2 {
+    margin-block-end: var(--space-s);
+  }
+
+  h3 {
+    margin-block-end: var(--space-2xs);
+  }
+
+  .product {
+    text-align: center;
+    margin-block-end: var(--space-s);
+    padding: var(--space-s);
+    border-radius: var(--space-s);
+    border: 2px solid grey;
+  }
+
+  .product__image {
+    max-width: 10em;
+    margin-inline: auto;
+  }
+
+  @media screen and (min-width: 500px) {
+    .product {
+      display: flex;
+      gap: var(--space-m);
+      text-align: left;
+    }
+
+    .product__image {
+      flex: none;
+    }
+  }
+
+  .store-metadata h2 {
+    font-size: var(--step-1)
+  }
+
+  .store-metadata h3 {
+    font-size: var(--step-0)
+  }
+</style>

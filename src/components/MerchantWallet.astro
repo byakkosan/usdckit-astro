@@ -1,0 +1,43 @@
+---
+import { getSecret } from 'astro:env/server';
+
+const { walletSetId } = Astro.props;
+
+interface Wallet {
+  id: string;
+  name: string;
+  blockchain: string;
+  address: string;
+  createDate: string;
+  updateDate: string;
+}
+
+const url = `https://api.circle.com/v1/w3s/wallets?walletSetId=${walletSetId}`;
+const options = {
+  method: 'GET',
+  headers: {
+    Authorization: `Bearer ${getSecret('API_KEY')}`,
+    'Content-Type': 'application/json'
+  }
+};
+const response = await fetch(url, options);
+const json = await response.json();
+const data = json.data;
+---
+<div>
+  {data.wallets.map((wallet: Wallet) => (
+    <p>Wallet ID: {wallet.id}</p>
+    <p>Blockchain: {wallet.blockchain}</p>
+    <p>Wallet Address: {wallet.address}</p>
+  ))}
+</div>
+
+<style>
+  div {
+    margin-block-end: var(--space-s);
+  }
+
+  p {
+    word-wrap: break-word;
+  }
+</style>

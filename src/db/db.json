@@ -1,0 +1,60 @@
+{
+  "merchants": [
+    {
+      "name": "The Store",
+      "walletSetName": "the-store-wallet-set",
+      "walletSetId": "7a3b24a3-1798-5b8d-9bdd-439909f3d807",
+      "walletAddress": "0x0000000000000000000000000000000000000000",
+      "paymentAcceptanceWalletName": "the-store-pa-wallet-set",
+      "paymentAcceptanceWalletSetId": "577714a6-bc24-5c07-bfe8-5b298fd23705"
+    },
+    {
+      "name": "Elephant Stripes",
+      "walletSetName": "elephants-stripes-wallet-set",
+      "walletSetId": "51b2a23c-6b0b-5669-b7bd-3c7c4923f3d1",
+      "walletAddress": "0x15538b4f66c98a949fe54a6d31f4ddb883fc4fc0",
+      "paymentAcceptanceWalletName": "elephants-stripes-pa-wallet-set",
+      "paymentAcceptanceWalletSetId": "f6e6a870-1481-57c5-bf32-009ea49bb7d9"
+    },
+    {
+      "name": "Sandwich Shop",
+      "walletSetName": "sandwich-shop-wallet-set",
+      "walletSetId": "b57b90c8-e347-57ec-8e07-f824f738b0a8",
+      "walletAddress": "0x0000000000000000000000000000000000000000",
+      "paymentAcceptanceWalletName": "sandwich-shop-pa-wallet-set",
+      "paymentAcceptanceWalletSetId": "31b1177e-eabb-5a3d-9e0a-d08e24bf95cf"
+    },
+    {
+      "name": "Rainbow Rouser",
+      "walletSetName": "rainbow-rouser-wallet-set",
+      "walletSetId": "1cf8372d-2366-5fe8-86f9-ea9ff3807566",
+      "walletAddress": "0x48a0edbcf16440a1e54fd8b8e5a57ca7c24d0a31",
+      "paymentAcceptanceWalletName": "rainbow-rouser-pa-wallet-set",
+      "paymentAcceptanceWalletSetId": "140d6642-00e6-51ff-9bb4-2caaa39ef1f1"
+    },
+    {
+      "name": "Cucumber Dreams",
+      "walletSetName": "cucumber-dreams-wallet-set",
+      "walletSetId": "4ebd1c3c-3f1d-5522-9ec2-a444144053b5",
+      "walletId": "0xadbb6696ac3a2c5c79facc3d128d581621b61b47",
+      "paymentAcceptanceWalletName": "cucumber-dreams-pa-wallet-set",
+      "paymentAcceptanceWalletSetId": "9c54742e-7755-5ec2-a07c-edf7584230f6"
+    },
+    {
+      "name": "Rockhuggers",
+      "walletSetName": "rockhuggers-wallet-set",
+      "walletSetId": "346befbf-e55f-57b3-888d-c14e57a91bc8",
+      "walletId": "0x870b1651ae5fed86c54cff1457fdfadca60365a0",
+      "paymentAcceptanceWalletName": "rockhuggers-pa-wallet-set",
+      "paymentAcceptanceWalletSetId": "e974446b-6ae6-5643-98eb-39e47b0a0619"
+    },
+    {
+      "name": "Sally's Grocery",
+      "walletSetName": "sally's-grocery-wallet-set",
+      "walletSetId": "1f7b5822-27d1-5efa-91e8-4220172c409c",
+      "walletId": "0x1131dd5986d5dc91399ebfe42d211394baa2f0eb",
+      "paymentAcceptanceWalletName": "sally's-grocery-pa-wallet-set",
+      "paymentAcceptanceWalletSetId": "27294484-1755-5fd6-b005-8e1cfbd2a2c4"
+    }
+  ]
+}

@@ -1,0 +1,51 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+
+const paymentAcceptanceWallet = await Astro.session?.get('paymentAcceptanceWallet');
+const orderId = await Astro.session?.get('orderId');
+const amount = await Astro.session?.get('amount');
+const paymentLink = await Astro.session?.get('paymentLink');
+const encodedPaymentLink = await Astro.session?.get('encodedPaymentLink');
+const merchantName = await Astro.session?.get('merchantName');
+const merchantId = await Astro.session?.get('merchantId');
+---
+
+<BaseLayout title="Pay" logo="/merchant-logo.svg" title={merchantName} altText={merchantName} merchantId={merchantId}>
+	<section>
+		<h2>Payment</h2>
+		<div class="order-details">
+			<p><strong>Order ID:</strong> {orderId}</p>
+			<p><strong>Amount due:</strong> {amount} USDC</p>
+		</div>
+		<div class="payment-details">
+			<a href={paymentLink}>
+				<img src=`https://api.qrserver.com/v1/create-qr-code/?data=${encodedPaymentLink}` />
+			</a>
+			<p>{paymentAcceptanceWallet.address}</p>
+		</div>
+	</section>
+</BaseLayout>
+
+<style>
+	h2 {
+		text-align: center;
+		margin-block-end: var(--space-xs);
+	}
+
+	div {
+		margin-block-end: var(--space-s);
+	}
+
+	.payment-details {
+		text-align: center;
+	}
+
+	.payment-details img {
+		margin-block-end: var(--space-s);
+	}
+
+	.payment-details p {
+		margin-block-end: var(--space-s);
+		word-wrap: break-word;
+	}
+</style>

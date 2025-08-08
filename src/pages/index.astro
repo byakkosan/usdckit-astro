@@ -1,0 +1,67 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import WalletSets from '../components/WalletSets.astro';
+import { actions } from 'astro:actions';
+import { getSecret } from "astro:env/server";
+
+const secretsConfigured = Boolean( getSecret('API_KEY')) && Boolean(getSecret('ENTITY_SECRET'));
+const setupMerchantResponse = Astro.getActionResult(actions.setupMerchant);
+console.log(setupMerchantResponse);
+if (setupMerchantResponse && !setupMerchantResponse.error) {
+  return Astro.redirect(`/merchants/${setupMerchantResponse.data.walletSetId}`);
+}
+---
+<BaseLayout title="Merchant Setup" logo="/psp-logo.svg">
+	<section>
+		<h2>Merchant Setup</h2>
+		<form action={actions.setupMerchant} method="POST">
+
+			<div class="input-wrapper">
+				<label for="merchantName">Merchant Name</label>
+				<input type="text" name="merchantName" placeholder="e.g. Sally's Grocery" />
+			</div>
+			
+			{secretsConfigured ? 
+				<button >Create Merchant WalletSet</button> :
+				<button disabled>Create Merchant WalletSet</button>
+			}
+		</form>
+		{!secretsConfigured && <p>Your secrets have not been configured.</p>}
+		{setupMerchantResponse?.error && <p>Transaction failed. Please check your transaction logs for details.</p>}
+	</section>
+
+	<section>
+		<h2>All merchants</h2>
+		<WalletSets />
+	</section>
+</BaseLayout>
+
+<style>
+	:global(.site__logo) {
+		max-width: 15em;
+	}
+
+	h1,
+	h2 {
+		margin-block-end: var(--space-xs);
+		text-align: center;
+	}
+
+	form {
+		display: flex;
+		flex-direction: column;
+		gap: var(--space-m);
+		margin-block-end: var(--space-xs);
+		max-width: 32em;
+		margin-inline: auto;
+	}
+
+	.input-wrapper {
+    display: flex;
+    flex-direction: column;
+  }
+
+	button {
+		margin-inline: auto;
+	}
+</style>
