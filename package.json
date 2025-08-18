@@ -9,9 +9,9 @@
     "astro": "astro"
   },
   "dependencies": {
-    "@astrojs/node": "^9.3.3",
-    "@circle-fin/usdckit": "^0.20.0",
-    "astro": "^5.12.8",
+    "@astrojs/node": "^9.4.2",
+    "@circle-fin/usdckit": "^0.20.1",
+    "astro": "^5.13.2",
     "lowdb": "^7.0.1"
   }
 }

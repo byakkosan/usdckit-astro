@@ -4,6 +4,14 @@ import MerchantWallet from '../../components/MerchantWallet.astro';
 import WalletList from '../../components/WalletList.astro';
 import { JSONFilePreset } from 'lowdb/node';
 
+import ArbLogo from '../../images/chains/arbitrum.svg';
+import AvaLogo from '../../images/chains/avalanche.svg';
+import BaseLogo from '../../images/chains/base.svg';
+import EthLogo from '../../images/chains/ethereum.svg';
+import MatLogo from '../../images/chains/polygon.svg';
+import OpLogo from '../../images/chains/optimism.svg';
+import UniLogo from '../../images/chains/unichain.svg';
+
 type Data = {
   merchants: { name: string; walletSetName: string; walletSetId: string; walletId: string; paymentAcceptanceWalletName: string; paymentAcceptanceWalletSetId: string }[]
 }
@@ -26,8 +34,7 @@ const { name, paymentAcceptanceWalletSetId } = merchant;
 const orderId = crypto.randomUUID();
 const price = 1;
 
-const makePaymentReponse = Astro.getActionResult(actions.makePayment);
-console.log(makePaymentReponse);
+const makePaymentReponse = Astro.getActionResult(actions.makePayment.makePayment);
 if (makePaymentReponse && !makePaymentReponse.error) {
   Astro.session?.set('paymentAcceptanceWallet', makePaymentReponse.data.paymentAcceptanceWallet);
   Astro.session?.set('orderId', makePaymentReponse.data.orderId);
@@ -54,8 +61,49 @@ if (makePaymentReponse && !makePaymentReponse.error) {
 				<p>Total: {price} USDC</p>
 			</div>
 		</div>
-		<form action={actions.makePayment} method="POST">
-			<input type="hidden" name="orderId" value={orderId} />
+    <h3>Payment options</h3>
+		<form action={actions.makePayment.makePayment} method="POST">
+      <fieldset>
+        <legend>Select chain:</legend>
+        <div class="chain-list">
+          <label for="arbSepolia">
+            <input id="arbSepolia" type="radio" name="chain" value="ARB_SEPOLIA" checked />
+            <ArbLogo />
+            <span>Arbitrum Sepolia</span>
+          </label>
+          <label for="avaxFuji">
+            <input id="avaxFuji" type="radio" name="chain" value="AVAX_FUJI" />
+            <AvaLogo />
+            <span>Avalanche Fuji</span>
+          </label>
+          <label for="baseSepolia">
+            <input id="baseSepolia" type="radio" name="chain" value="BASE_SEPOLIA" />
+            <BaseLogo />
+            <span>Base Sepolia</span>
+          </label>
+          <label for="ethSepolia">
+            <input id="ethSepolia" type="radio" name="chain" value="ETH_SEPOLIA" />
+            <EthLogo />
+            <span>Ethereum Sepolia</span>
+          </label>
+          <label for="maticAmoy">
+            <input id="maticAmoy" type="radio" name="chain" value="MATIC_AMOY" />
+            <MatLogo />
+            <span>Polygon Amoy</span>
+          </label>
+          <label for="opSepolia">
+            <input id="opSepolia" type="radio" name="chain" value="OP_SEPOLIA" />
+            <OpLogo />
+            <span>Optimism Sepolia</span>
+          </label>
+          <label for="uniSepolia">
+            <input id="uniSepolia" type="radio" name="chain" value="UNI_SEPOLIA" />
+            <UniLogo />
+            <span>Unichain Sepolia</span>
+          </label>
+        </div>
+      </fieldset>
+      <input type="hidden" name="orderId" value={orderId} />
       <input type="hidden" name="paymentAcceptanceWalletSetId" value={paymentAcceptanceWalletSetId} />
 			<input type="hidden" name="amount" value={price} />
       <input type="hidden" name="merchantName" value={name} />
@@ -87,6 +135,7 @@ if (makePaymentReponse && !makePaymentReponse.error) {
     padding: var(--space-s);
     border-radius: var(--space-s);
     border: 2px solid grey;
+    max-width: fit-content;
   }
 
   .product__image {
@@ -104,6 +153,60 @@ if (makePaymentReponse && !makePaymentReponse.error) {
     .product__image {
       flex: none;
     }
+  }
+
+  fieldset {
+    margin-block-end: var(--space-s);
+  }
+
+  legend {
+    margin-block-end: var(--space-2xs);
+  }
+
+  .chain-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-xs);
+  }
+
+  label {
+    position: relative;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    padding: var(--space-2xs);
+    border-radius: var(--border-radius);
+    border: 1px solid grey;
+  }
+
+  label:hover > input + :global(svg),
+  label > input:checked + :global(svg) {
+    filter: grayscale(0);
+  }
+
+  label:has(input:checked) {
+    background-color: lightcyan
+  }
+
+  label:has(input:focus) {
+    outline: 2px solid;
+  }
+
+  input[type="radio"] {
+    position: absolute;
+    opacity: 0;
+    width: 1.5em;
+    height: 1.5em;
+    cursor: pointer;
+  }
+
+  input + :global(svg) {
+    display: inline-block;
+    width: 1.5em;
+    height: 1.5em;
+    margin-inline-end: var(--space-2xs);
+    filter: grayscale(1);
+    transition: filter 0.2s ease-in-out;
   }
 
   .store-metadata h2 {

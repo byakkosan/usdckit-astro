@@ -73,6 +73,10 @@ section {
 }
 
 /* Standardised element styles */
+p {
+  line-height: 1.38;
+}
+
 label {
   font-size: var(--step--1);
   margin-block-end: var(--space-3xs);

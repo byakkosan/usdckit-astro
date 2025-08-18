@@ -1,5 +1,6 @@
 ---
 import { getSecret } from 'astro:env/server';
+// import { initiateDeveloperControlledWalletsClient } from "@circle-fin/developer-controlled-wallets";
 import CopyBlock from './CopyBlock.astro';
 
 interface WalletSet {
@@ -23,6 +24,16 @@ const options = {
 const response = await fetch(url, options);
 const json = await response.json();
 const data = json.data;
+
+// const secretsConfigured = Boolean( getSecret('API_KEY')) && Boolean(getSecret('ENTITY_SECRET'));
+
+// const client = initiateDeveloperControlledWalletsClient({
+//   apiKey: `${getSecret("API_KEY")}`,
+//   entitySecret: `${getSecret("ENTITY_SECRET")}`,
+// });
+
+// const response = await client.listWalletSets();
+// const walletSets = response.data?.walletSets;
 ---
 
 <table>
@@ -41,7 +52,6 @@ const data = json.data;
       <tr>
         <td data-label="Name"><a href={`/merchants/${walletSet.id}`}>{walletSet.name}</a></td>
         <td data-label="WalletSet ID" class="collapse"><CopyBlock source={walletSet.id} /></td>
-        
         <td data-label="Custody Type">{walletSet.custodyType}</td>
       </tr>
     ))}

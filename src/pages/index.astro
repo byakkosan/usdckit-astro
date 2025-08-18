@@ -5,8 +5,7 @@ import { actions } from 'astro:actions';
 import { getSecret } from "astro:env/server";
 
 const secretsConfigured = Boolean( getSecret('API_KEY')) && Boolean(getSecret('ENTITY_SECRET'));
-const setupMerchantResponse = Astro.getActionResult(actions.setupMerchant);
-console.log(setupMerchantResponse);
+const setupMerchantResponse = Astro.getActionResult(actions.setupMerchant.setupMerchant);
 if (setupMerchantResponse && !setupMerchantResponse.error) {
   return Astro.redirect(`/merchants/${setupMerchantResponse.data.walletSetId}`);
 }
@@ -14,7 +13,7 @@ if (setupMerchantResponse && !setupMerchantResponse.error) {
 <BaseLayout title="Merchant Setup" logo="/psp-logo.svg">
 	<section class="setup-merchant">
 		<h2>Merchant Setup</h2>
-		<form action={actions.setupMerchant} method="POST">
+		<form action={actions.setupMerchant.setupMerchant} method="POST">
 
 			<div class="input-wrapper">
 				<label for="merchantName">Merchant Name</label>

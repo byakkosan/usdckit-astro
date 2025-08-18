@@ -1,31 +1,29 @@
 ---
 import { getSecret } from 'astro:env/server';
-
-const { walletSetId } = Astro.props;
+import { initiateDeveloperControlledWalletsClient } from "@circle-fin/developer-controlled-wallets";
 
 interface Wallet {
   id: string;
-  name: string;
   blockchain: string;
   address: string;
-  createDate: string;
-  updateDate: string;
 }
 
-const url = `https://api.circle.com/v1/w3s/wallets?walletSetId=${walletSetId}`;
-const options = {
-  method: 'GET',
-  headers: {
-    Authorization: `Bearer ${getSecret('API_KEY')}`,
-    'Content-Type': 'application/json'
-  }
-};
-const response = await fetch(url, options);
-const json = await response.json();
-const data = json.data;
+const secretsConfigured = Boolean( getSecret('API_KEY')) && Boolean(getSecret('ENTITY_SECRET'));
+
+const client = initiateDeveloperControlledWalletsClient({
+  apiKey: `${getSecret("API_KEY")}`,
+  entitySecret: `${getSecret("ENTITY_SECRET")}`,
+});
+
+const { walletSetId } = Astro.props;
+
+const response = await client.listWallets({
+  walletSetId: walletSetId,
+});
+const wallets = (response.data?.wallets || []) as Wallet[];
 ---
 <div>
-  {data.wallets.map((wallet: Wallet) => (
+  {wallets.map((wallet: Wallet) => (
     <p>Wallet ID: {wallet.id}</p>
     <p>Blockchain: {wallet.blockchain}</p>
     <p>Wallet Address: {wallet.address}</p>
