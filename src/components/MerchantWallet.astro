@@ -8,8 +8,6 @@ interface Wallet {
   address: string;
 }
 
-const secretsConfigured = Boolean( getSecret('API_KEY')) && Boolean(getSecret('ENTITY_SECRET'));
-
 const client = initiateDeveloperControlledWalletsClient({
   apiKey: `${getSecret("API_KEY")}`,
   entitySecret: `${getSecret("ENTITY_SECRET")}`,
