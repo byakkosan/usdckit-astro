@@ -1,7 +1,7 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import MerchantWallet from '../../components/MerchantWallet.astro';
-import WalletList from '../../components/WalletList.astro';
+import OrderWallets from '../../components/OrderWallets.astro';
 import { JSONFilePreset } from 'lowdb/node';
 
 import ArbLogo from '../../images/chains/arbitrum.svg';
@@ -13,36 +13,33 @@ import OpLogo from '../../images/chains/optimism.svg';
 import UniLogo from '../../images/chains/unichain.svg';
 
 type Data = {
-  merchants: { name: string; walletSetName: string; walletSetId: string; walletId: string; paymentAcceptanceWalletName: string; paymentAcceptanceWalletSetId: string }[]
+  merchants: { name: string; id: string; walletAddress: string }[]
 }
 import { actions } from 'astro:actions';
-import crypto from 'crypto';
 
 const { id } = Astro.params;
 
 const defaultData: Data = { merchants: [] };
 const db = await JSONFilePreset<Data>('./src/db/db.json', defaultData);
 const merchant = db.data.merchants.find(
-  (p: { walletSetId: string }) => p.walletSetId === id
+  (p: { id: string }) => p.id === id
 );
 
 if (!merchant) {
   throw new Error(`merchant with id ${id} not found`);
 }
 
-const { name, paymentAcceptanceWalletSetId } = merchant;
-const orderId = crypto.randomUUID();
+const { name, walletAddress } = merchant;
 const price = 1;
 
-const makePaymentReponse = Astro.getActionResult(actions.makePayment.makePayment);
+const makePaymentReponse = Astro.getActionResult(actions.payment.generatePaymentInfo);
+console.log(makePaymentReponse)
 if (makePaymentReponse && !makePaymentReponse.error) {
-  Astro.session?.set('paymentAcceptanceWallet', makePaymentReponse.data.paymentAcceptanceWallet);
-  Astro.session?.set('orderId', makePaymentReponse.data.orderId);
-	Astro.session?.set('amount', makePaymentReponse.data.amount);
-  Astro.session?.set('paymentLink', makePaymentReponse.data.paymentLink);
-  Astro.session?.set('encodedPaymentLink', makePaymentReponse.data.encodedPaymentLink);
-  Astro.session?.set('merchantName', name);
-  Astro.session?.set('merchantId', id);
+	// Astro.session?.set('amount', makePaymentReponse.data.amount);
+  // Astro.session?.set('paymentLink', makePaymentReponse.data.paymentLink);
+  // Astro.session?.set('encodedPaymentLink', makePaymentReponse.data.encodedPaymentLink);
+  // Astro.session?.set('merchantName', name);
+  // Astro.session?.set('merchantId', id);
   return Astro.redirect('/pay');
 }
 ---
@@ -55,14 +52,13 @@ if (makePaymentReponse && !makePaymentReponse.error) {
       </div>	
 			<div class="product__details">
 				<h3>Good Vibes</h3>
-				<p>Order ID: {orderId}</p>
 				<p>Qty: 1</p>
 				<p>Price per unit: {price} USDC</p>
 				<p>Total: {price} USDC</p>
 			</div>
 		</div>
     <h3>Payment options</h3>
-		<form action={actions.makePayment.makePayment} method="POST">
+		<form action={actions.payment.generatePaymentInfo} method="POST">
       <fieldset>
         <legend>Select chain:</legend>
         <div class="chain-list">
@@ -103,20 +99,20 @@ if (makePaymentReponse && !makePaymentReponse.error) {
           </label>
         </div>
       </fieldset>
-      <input type="hidden" name="orderId" value={orderId} />
-      <input type="hidden" name="paymentAcceptanceWalletSetId" value={paymentAcceptanceWalletSetId} />
 			<input type="hidden" name="amount" value={price} />
+      <input type="hidden" name="refId" value={`${id}-order`} />
       <input type="hidden" name="merchantName" value={name} />
       <input type="hidden" name="merchantId" value={id} />
 			<button >Pay</button>
 		</form>
 		{makePaymentReponse?.error && <p>Transaction failed. Please check your transaction logs for details.</p>}
 	</section>
+
 	<section class="store-metadata">
-		<h2>Store metadata</h2>
-    <MerchantWallet walletSetId={id} />
-    <h3>Payment Acceptance Wallets</h3>
-    <WalletList walletSetId={paymentAcceptanceWalletSetId} />
+		<h2>Store metadata <small>({walletAddress})</small></h2>
+    <MerchantWallet walletAddress={walletAddress} />
+    <h3>Orders</h3>
+    <OrderWallets walletAddress={walletAddress} refId={`${id}-order`} />
 	</section>
 </BaseLayout>
 
@@ -127,6 +123,13 @@ if (makePaymentReponse && !makePaymentReponse.error) {
 
   h3 {
     margin-block-end: var(--space-2xs);
+  }
+
+  small {
+    font-size: var(--step--1);
+    font-weight: 400;
+    display: block;
+    margin-block-start: var(--space-3xs);
   }
 
   .product {

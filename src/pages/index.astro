@@ -1,19 +1,19 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
-import WalletSets from '../components/WalletSets.astro';
+import Merchants from '../components/Merchants.astro';
 import { actions } from 'astro:actions';
 import { getSecret } from "astro:env/server";
 
 const secretsConfigured = Boolean( getSecret('API_KEY')) && Boolean(getSecret('ENTITY_SECRET'));
-const setupMerchantResponse = Astro.getActionResult(actions.setupMerchant.setupMerchant);
+const setupMerchantResponse = Astro.getActionResult(actions.merchant.initialSetup);
 if (setupMerchantResponse && !setupMerchantResponse.error) {
-  return Astro.redirect(`/merchants/${setupMerchantResponse.data.walletSetId}`);
+  // return Astro.redirect(`/merchants/${setupMerchantResponse.data.walletSetId}`);
 }
 ---
 <BaseLayout title="Merchant Setup" logo="/psp-logo.svg">
 	<section class="setup-merchant">
 		<h2>Merchant Setup</h2>
-		<form action={actions.setupMerchant.setupMerchant} method="POST">
+		<form action={actions.merchant.initialSetup} method="POST">
 
 			<div class="input-wrapper">
 				<label for="merchantName">Merchant Name</label>
@@ -21,8 +21,8 @@ if (setupMerchantResponse && !setupMerchantResponse.error) {
 			</div>
 			
 			{secretsConfigured ? 
-				<button >Create Merchant WalletSet</button> :
-				<button disabled>Create Merchant WalletSet</button>
+				<button >Create Merchant</button> :
+				<button disabled>Create Merchant</button>
 			}
 		</form>
 		{!secretsConfigured && <p>Your secrets have not been configured.</p>}
@@ -31,7 +31,7 @@ if (setupMerchantResponse && !setupMerchantResponse.error) {
 
 	<section class="wallet-sets">
 		<h2>All merchants</h2>
-		<WalletSets />
+		<Merchants />
 	</section>
 </BaseLayout>
 

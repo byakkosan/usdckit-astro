@@ -4,7 +4,7 @@ import CopyBlock from './CopyBlock.astro';
 import { initiateDeveloperControlledWalletsClient } from "@circle-fin/developer-controlled-wallets";
 
 interface Wallet {
-  refId: string;
+  createDate: string;
   blockchain: string;
   address: string;
 }
@@ -16,10 +16,11 @@ const client = initiateDeveloperControlledWalletsClient({
   entitySecret: `${getSecret("ENTITY_SECRET")}`,
 });
 
-const { walletSetId } = Astro.props;
+const { walletSetId, refId } = Astro.props;
 
 const response = await client.listWallets({
   walletSetId: walletSetId,
+  refId: refId
 });
 const wallets = (response.data?.wallets || []) as Wallet[];
 ---
@@ -27,24 +28,28 @@ const wallets = (response.data?.wallets || []) as Wallet[];
 <table>
   <thead>
     <tr>
-      <th>refId</th>
+      <th>Order date</th>
       <th>Blockchain</th>
       <th>Wallet Address</th>
     </tr>
   </thead>
-  {secretsConfigured &&
-  <tbody>
-    {wallets
-      .filter((wallet: Wallet) => wallet.refId?.startsWith('order-'))
-      .map((wallet: Wallet) => (
-      <tr>
-        <td><CopyBlock source={wallet.refId} /></td>
-        <td>{wallet.blockchain}</td>
-        <td><CopyBlock source={wallet.address} /></td>
-      </tr>
-    ))}
-  </tbody>
-  }
+  {secretsConfigured && (
+    <tbody>
+      {wallets.length > 0 ? (
+        wallets.map((wallet: Wallet) => (
+            <tr>
+              <td>{wallet.createDate}</td>
+              <td>{wallet.blockchain}</td>
+              <td><CopyBlock source={wallet.address} /></td>
+            </tr>
+          ))
+      ) : (
+        <tr>
+          <td colspan="3">No wallets found</td>
+        </tr>
+      )}
+    </tbody>
+  )}
 </table>
 
 <style>

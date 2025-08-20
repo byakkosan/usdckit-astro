@@ -10,7 +10,7 @@
   },
   "dependencies": {
     "@astrojs/node": "^9.4.2",
-    "@circle-fin/usdckit": "^0.20.1",
+    "@circle-fin/usdckit": "^0.20.2",
     "astro": "^5.13.2",
     "lowdb": "^7.0.1"
   }

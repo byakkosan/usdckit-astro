@@ -1,44 +1,36 @@
 ---
-import { getSecret } from 'astro:env/server';
 import CopyBlock from './CopyBlock.astro';
-import { initiateDeveloperControlledWalletsClient } from "@circle-fin/developer-controlled-wallets";
+import { JSONFilePreset } from 'lowdb/node';
 
-interface Wallet {
-  id: string;
-  blockchain: string;
-  address: string;
+type Data = {
+  merchants: { name: string; id: string; walletAddress: string }[]
 }
 
-const client = initiateDeveloperControlledWalletsClient({
-  apiKey: `${getSecret("API_KEY")}`,
-  entitySecret: `${getSecret("ENTITY_SECRET")}`,
-});
-
-const { walletAddress } = Astro.props;
-
-const response = await client.listWallets({
-  address: walletAddress,
-});
-const wallets = (response.data?.wallets || []) as Wallet[];
+const defaultData: Data = { merchants: [] };
+const db = await JSONFilePreset<Data>('./src/db/db.json', defaultData);
+const merchants = db.data.merchants;
 ---
+
 <table>
   <thead>
     <tr>
-      <th>Wallet ID</th>
-      <th>Blockchain</th>
+      <th>ID</th>
+      <th>Name</th>
+      <th>Wallet Address</th>
     </tr>
   </thead>
   <tbody>
-    {wallets.length > 0 ? (
-      wallets.map((wallet: Wallet) => (
+    {merchants.length > 0 ? (
+      merchants.map((merchant) => (
         <tr>
-          <td><CopyBlock source={wallet.id} /></td>
-          <td>{wallet.blockchain}</td>
+          <td>{merchant.id}</td>
+          <td><a href={`/merchants/${merchant.id}`}>{merchant.name}</a></td>
+          <td><CopyBlock source={merchant.walletAddress} /></td>
         </tr>
       ))
     ) : (
       <tr>
-        <td colspan="2">No wallets found</td>
+        <td colspan="3">No merchants found</td>
       </tr>
     )}
   </tbody>
@@ -48,7 +40,6 @@ const wallets = (response.data?.wallets || []) as Wallet[];
   table {
     max-width: 100%;
     font-size: var(--step--1);
-    margin-block-end: var(--space-s);
   }
 
   th {

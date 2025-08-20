@@ -1,7 +1,7 @@
-import { setupMerchant } from "./setupMerchant";
-import { makePayment } from "./makePayment";
+import { merchant } from "./merchant";
+import { payment } from "./payment";
 
 export const server = {
-  setupMerchant,
-  makePayment
+  merchant,
+  payment
 };

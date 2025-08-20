@@ -4,12 +4,11 @@ import { z } from "astro:schema";
 import * as chains from '@circle-fin/usdckit/chains';
 import { createCircleClient } from '@circle-fin/usdckit';
 
-export const makePayment = {
-  makePayment: defineAction({
+export const payment = {
+  generatePaymentInfo: defineAction({
     accept: "form",
     input: z.object({
-      orderId: z.string(),
-      paymentAcceptanceWalletSetId: z.string(),
+      merchantId: z.string(),
       amount: z.string(),
       chain: z.string(),
     }),
@@ -33,14 +32,13 @@ export const makePayment = {
       })
 
       const order = {
-        id: input.orderId,
         token: selectedChain.contracts.USDC,
         amount: input.amount,
       } as const
 
       const paymentAcceptanceWallet = await client.createAccount({
-        refId: `order-${input.orderId}`,
-        walletSetId: input.paymentAcceptanceWalletSetId,
+        refId: `${input.merchantId}-order`,
+        walletSetId: `${getSecret("PAYMENT_ACCEPTANCE_WALLET_SET_ID")}`,
         chain: selectedChain,
       })
 
@@ -57,7 +55,6 @@ export const makePayment = {
         paymentAcceptanceWallet: {
           address: paymentAcceptanceWallet.address
         },
-        orderId: input.orderId,
         amount: input.amount,
         paymentLink: paymentLink,
         encodedPaymentLink: encodedPaymentLink

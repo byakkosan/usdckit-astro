@@ -2,7 +2,6 @@
 import BaseLayout from '../layouts/BaseLayout.astro';
 
 const paymentAcceptanceWallet = await Astro.session?.get('paymentAcceptanceWallet');
-const orderId = await Astro.session?.get('orderId');
 const amount = await Astro.session?.get('amount');
 const paymentLink = await Astro.session?.get('paymentLink');
 const encodedPaymentLink = await Astro.session?.get('encodedPaymentLink');
@@ -14,7 +13,6 @@ const merchantId = await Astro.session?.get('merchantId');
 	<section>
 		<h2>Payment</h2>
 		<div class="order-details">
-			<p><strong>Order ID:</strong> {orderId}</p>
 			<p><strong>Amount due:</strong> {amount} USDC</p>
 		</div>
 		<div class="payment-details">
